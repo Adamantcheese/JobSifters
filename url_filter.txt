@@ -19,3 +19,4 @@ quantum
 lead
 full-stack
 specialist
+director
