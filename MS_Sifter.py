@@ -54,17 +54,23 @@ print(len(filteredJobs))
 # Filter jobs with page source filters
 doubleFilteredJobs = copy.deepcopy(filteredJobs)
 for job in filteredJobs:
-    browser.get(job)
-    for filter in sourceFilters:
-        if filter in str(WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, r'section.job-description'))).get_attribute('innerHTML')).lower():
-            try:
-                doubleFilteredJobs.remove(job)
-            except:
-                continue
+    try:
+        browser.get(job)
+        innerHTML = str(WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, r'section.job-description'))).get_attribute('innerHTML')).lower()
+        for filter in sourceFilters:
+            if filter in innerHTML:
+                try:
+                    doubleFilteredJobs.remove(job)
+                except:
+                    continue
+    except:
+        continue
 
 # Print out how many jobs we have left after source filtering
 print(len(doubleFilteredJobs))
 with open('ms_jobs.txt', 'w') as f:
     json.dump(doubleFilteredJobs, f)
+
+browser.quit()
 
 

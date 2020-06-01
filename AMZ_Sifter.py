@@ -7,7 +7,7 @@ import json
 
 browser = webdriver.Firefox()
 input("Please navigate to and pre-filter jobs. Press ENTER when ready.")
-# Jobs URL is https://www.amazon.jobs/en/search?offset=0&result_limit=10&sort=relevant&category=software-development&job_type=Full-Time&cities[]=Irvine%2C%20California%2C%20USA&cities[]=Seattle%2C%20Washington%2C%20USA&cities[]=Portland%2C%20Oregon%2C%20USA&business_category[]=operations-technology&business_category[]=ecommerce-platform&business_category[]=amazon-devices&business_category[]=primevideo&business_category[]=amazongo&business_category[]=digital-entertainment&business_category[]=subsidiaries&business_category[]=amazon-books&category_type=Corporate&distanceType=Mi&radius=24km&latitude=&longitude=&loc_group_id=&loc_query=&base_query=software&city=&country=&region=&county=&query_options=&
+# Jobs URL is https://www.amazon.jobs/en/search?offset=0&result_limit=10&sort=recent&category=software-development&job_type=Full-Time&cities[]=Seattle%2C%20Washington%2C%20USA&cities[]=Bellevue%2C%20Washington%2C%20USA&category_type=Corporate&distanceType=Mi&radius=24km&latitude=&longitude=&loc_group_id=&loc_query=&base_query=software&city=&country=&region=&county=&query_options=&
 
 # Populate a list of jobs
 jobs = []
@@ -54,17 +54,23 @@ print(len(filteredJobs))
 # Filter jobs with page source filters
 doubleFilteredJobs = copy.deepcopy(filteredJobs)
 for job in filteredJobs:
-    browser.get(job)
-    for filter in sourceFilters:
-        if filter in str(WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, r'div#sb-site div#job-detail div.content'))).get_attribute('innerHTML')).lower():
-            try:
-                doubleFilteredJobs.remove(job)
-            except:
-                continue
+    try:
+        browser.get(job)
+        innerHTML = str(WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, r'div#job-detail div.content'))).get_attribute('innerHTML')).lower()
+        for filter in sourceFilters:
+            if filter in innerHTML:
+                try:
+                    doubleFilteredJobs.remove(job)
+                except:
+                    continue
+    except:
+        continue
 
 # Print out how many jobs we have left after source filtering
 print(len(doubleFilteredJobs))
 with open('amz_jobs.txt', 'w') as f:
     json.dump(doubleFilteredJobs, f)
+
+browser.quit()
 
 
