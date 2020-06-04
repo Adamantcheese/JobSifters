@@ -20,3 +20,8 @@ lead
 full-stack
 specialist
 director
+compliance
+fintech
+profitability
+ios
+frontend
